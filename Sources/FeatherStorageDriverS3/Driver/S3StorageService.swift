@@ -13,8 +13,6 @@ import FeatherStorage
 @dynamicMemberLookup
 struct S3StorageService {
 
-    let s3: S3
-
     public let config: ServiceConfig
 
     subscript<T>(
@@ -25,10 +23,8 @@ struct S3StorageService {
     }
 
     init(
-        s3: S3,
         config: ServiceConfig
     ) {
-        self.s3 = s3
         self.config = config
     }
 }
@@ -36,6 +32,18 @@ struct S3StorageService {
 private extension S3StorageService {
 
     var bucketName: String { self.bucket.name! }
+    
+    var s3: S3 {
+        let awsUrl = "https://s3.\(self.region.rawValue).amazonaws.com"
+        let endpoint = self.endpoint ?? awsUrl
+
+        return .init(
+            client: self.client,
+            region: self.region,
+            endpoint: endpoint,
+            timeout: self.timeout
+        )
+    }
 }
 
 extension S3StorageService: StorageService {
@@ -49,8 +57,7 @@ extension S3StorageService: StorageService {
         buffer: ByteBuffer
     ) async throws {
         do {
-            let customS3 = s3.with(timeout: self.timeout)
-            _ = try await customS3.putObject(
+            _ = try await s3.putObject(
                 .init(
                     body: .byteBuffer(buffer),
                     bucket: bucketName,
@@ -74,11 +81,10 @@ extension S3StorageService: StorageService {
             throw StorageServiceError.invalidKey
         }
         do {
-            let customS3 = s3.with(timeout: self.timeout)
             let byteRange = range.map {
                 "bytes=\($0.lowerBound)-\($0.upperBound)"
             }
-            let response = try await customS3.getObject(
+            let response = try await s3.getObject(
                 .init(
                     bucket: bucketName,
                     key: key,
@@ -256,8 +262,7 @@ extension S3StorageService: StorageService {
         buffer: ByteBuffer
     ) async throws -> Multipart.Chunk {
         do {
-            let customS3 = s3.with(timeout: self.timeout)
-            let res = try await customS3.uploadPart(
+            let res = try await s3.uploadPart(
                 .init(
                     body: .byteBuffer(buffer),
                     bucket: bucketName,
@@ -310,8 +315,7 @@ extension S3StorageService: StorageService {
                     partNumber: chunk.number
                 )
             }
-            let customS3 = s3.with(timeout: self.timeout)
-            _ = try await customS3.completeMultipartUpload(
+            _ = try await s3.completeMultipartUpload(
                 .init(
                     bucket: bucketName,
                     key: key,

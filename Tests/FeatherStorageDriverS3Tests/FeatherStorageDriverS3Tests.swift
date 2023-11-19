@@ -13,14 +13,15 @@ import FeatherService
 import FeatherStorage
 import FeatherStorageDriverS3
 import XCTFeatherStorage
+import SotoCore
 
 final class FeatherStorageDriverS3Tests: XCTestCase {
 
-    var accessKeyId: String {
+    var id: String {
         ProcessInfo.processInfo.environment["S3_ID"]!
     }
 
-    var secretAccessKey: String {
+    var secret: String {
         ProcessInfo.processInfo.environment["S3_SECRET"]!
     }
 
@@ -35,18 +36,22 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
     // MARK: - tests
 
     func testS3DriverUsingTestSuite() async throws {
-
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-
         do {
             let registry = ServiceRegistry()
+            
+            let client = AWSClient(
+                credentialProvider: .static(
+                    accessKeyId: id,
+                    secretAccessKey: secret
+                ),
+                httpClientProvider: .createNewWithEventLoopGroup(eventLoopGroup)
+            )
+            
             try await registry.add(
                 .s3Storage(
                     eventLoopGroup: eventLoopGroup,
-                    credentialProvider: .static(
-                        accessKeyId: accessKeyId,
-                        secretAccessKey: secretAccessKey
-                    ),
+                    client: client,
                     region: .init(rawValue: region),
                     bucket: .init(name: bucket)
                 ),
@@ -54,15 +59,18 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
             )
 
             try await registry.run()
-
             let storage = try await registry.get(.s3Storage) as! StorageService
-            let suite = StorageTestSuite(storage)
+
             do {
+                let suite = StorageTestSuite(storage)
                 try await suite.testAll()
+
                 try await registry.shutdown()
+                try await client.shutdown()
             }
             catch {
                 try await registry.shutdown()
+                try await client.shutdown()
                 throw error
             }
         }

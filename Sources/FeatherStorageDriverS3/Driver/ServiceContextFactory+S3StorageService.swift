@@ -6,28 +6,27 @@
 //
 
 import SotoS3
+import SotoCore
 import FeatherService
 
 public extension ServiceContextFactory {
 
     static func s3Storage(
         eventLoopGroup: EventLoopGroup,
-        credentialProvider: CredentialProviderFactory = .default,
+        client: AWSClient,
         region: Region,
         bucket: S3.Bucket,
         endpoint: String? = nil,
-        logLevel: Logger.Level = .notice,
-        logger: Logger = AWSClient.loggingDisabled
+        timeout: TimeAmount? = nil
     ) -> Self {
         .init {
             S3StorageServiceContext(
                 eventLoopGroup: eventLoopGroup,
-                credentialProvider: credentialProvider,
+                client: client,
                 region: region,
                 bucket: bucket,
                 endpoint: endpoint,
-                logLevel: logLevel,
-                logger: logger
+                timeout: timeout
             )
         }
     }
