@@ -6,6 +6,7 @@
 //
 
 import NIO
+import NIOFoundationCompat
 import Logging
 import Foundation
 import XCTest
@@ -36,7 +37,9 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
     // MARK: - tests
 
     func testS3DriverUsingTestSuite() async throws {
-        let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+        let eventLoopGroup = MultiThreadedEventLoopGroup(
+            numberOfThreads: 1 //System.coreCount
+        )
         do {
             let registry = ServiceRegistry()
             
@@ -49,17 +52,17 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
             )
             
             try await registry.add(
-                .s3Storage(
+                S3StorageServiceContext(
                     eventLoopGroup: eventLoopGroup,
                     client: client,
-                    region: .init(rawValue: region),
-                    bucket: .init(name: bucket)
-                ),
-                as: .s3Storage
+                    region: .init(rawValue: self.region),
+                    bucket: .init(name: self.bucket),
+                    timeout: .seconds(60)
+                )
             )
 
             try await registry.run()
-            let storage = try await registry.get(.s3Storage) as! StorageService
+            let storage = try await registry.storage()
 
             do {
                 let suite = StorageTestSuite(storage)

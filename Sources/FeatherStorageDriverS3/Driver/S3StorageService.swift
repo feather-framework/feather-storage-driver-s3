@@ -63,8 +63,7 @@ extension S3StorageService: StorageService {
                     bucket: bucketName,
                     key: key
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
         }
         catch {
@@ -74,7 +73,7 @@ extension S3StorageService: StorageService {
 
     public func download(
         key: String,
-        range: ClosedRange<UInt>?
+        range: ClosedRange<Int>?
     ) async throws -> ByteBuffer {
         let exists = await exists(key: key)
         guard exists else {
@@ -90,8 +89,7 @@ extension S3StorageService: StorageService {
                     key: key,
                     range: byteRange
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
             guard let buffer = response.body?.asByteBuffer() else {
                 throw StorageServiceError.invalidBuffer
@@ -114,8 +112,7 @@ extension S3StorageService: StorageService {
                     bucket: bucketName,
                     key: key
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
             return true
         }
@@ -138,8 +135,7 @@ extension S3StorageService: StorageService {
                     bucket: bucketName,
                     key: key
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
             return UInt64(res.contentLength ?? 0)
         }
@@ -160,8 +156,7 @@ extension S3StorageService: StorageService {
                     copySource: bucketName + "/" + source,
                     key: destination
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
         }
         catch {
@@ -176,8 +171,7 @@ extension S3StorageService: StorageService {
                     bucket: bucketName,
                     prefix: key
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
             let keys = (list.contents ?? []).map(\.key).compactMap { $0 }
             var dropCount = 0
@@ -203,8 +197,7 @@ extension S3StorageService: StorageService {
                     bucket: bucketName,
                     key: key
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
         }
         catch {
@@ -221,8 +214,7 @@ extension S3StorageService: StorageService {
                     contentLength: 0,
                     key: safeKey
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
         }
         catch {
@@ -239,8 +231,7 @@ extension S3StorageService: StorageService {
                     bucket: bucketName,
                     key: key
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
             guard let uploadId = res.uploadId else {
                 throw StorageServiceError.invalidMultipartId
@@ -260,7 +251,7 @@ extension S3StorageService: StorageService {
         key: String,
         number: Int,
         buffer: ByteBuffer
-    ) async throws -> Multipart.Chunk {
+    ) async throws -> StorageChunk {
         do {
             let res = try await s3.uploadPart(
                 .init(
@@ -270,8 +261,7 @@ extension S3StorageService: StorageService {
                     partNumber: number,
                     uploadId: multipartId
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
             guard let etag = res.eTag else {
                 throw StorageServiceError.invalidMultipartChunk
@@ -294,8 +284,7 @@ extension S3StorageService: StorageService {
                     key: key,
                     uploadId: multipartId
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
         }
         catch {
@@ -306,7 +295,7 @@ extension S3StorageService: StorageService {
     public func finish(
         multipartId: String,
         key: String,
-        chunks: [Multipart.Chunk]
+        chunks: [StorageChunk]
     ) async throws {
         do {
             let parts = chunks.map { chunk -> S3.CompletedPart in
@@ -322,8 +311,7 @@ extension S3StorageService: StorageService {
                     multipartUpload: .init(parts: parts),
                     uploadId: multipartId
                 ),
-                logger: logger,
-                on: self.eventLoopGroup.any()
+                logger: logger
             )
         }
         catch {
