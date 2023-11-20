@@ -14,17 +14,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/feather-framework/feather-service.git",
       "state" : {
-        "revision" : "ad5b6fa727d5de89efc3f1f2931fd0c7920c380e",
-        "version" : "0.1.0"
+        "revision" : "7e8c2c18fa353fadb1e546fb11cb0e8a7c0ddc04",
+        "version" : "0.2.0"
       }
     },
     {
       "identity" : "feather-storage",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/feather-framework/feather-storage.git",
+      "location" : "https://github.com/feather-framework/feather-storage",
       "state" : {
-        "revision" : "385ea8a013a329f9c76415fe36a85eb58564191c",
-        "version" : "0.1.0"
+        "revision" : "d44e8b377d9fb63e112f70272553cb8ed193b7b4",
+        "version" : "0.2.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "853522d90871b4b63262843196685795b5008c46",
-        "version" : "2.61.1"
+        "revision" : "702cd7c56d5d44eeba73fdf83918339b26dc855c",
+        "version" : "2.62.0"
       }
     },
     {

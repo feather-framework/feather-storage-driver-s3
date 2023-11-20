@@ -8,7 +8,7 @@
 import SotoS3
 import FeatherService
 
-struct S3StorageServiceContext: ServiceContext {
+public struct S3StorageServiceContext: ServiceContext {
 
     let eventLoopGroup: EventLoopGroup
     let client: AWSClient
@@ -16,8 +16,24 @@ struct S3StorageServiceContext: ServiceContext {
     let bucket: S3.Bucket
     let endpoint: String?
     let timeout: TimeAmount?
+    
+    public init(
+        eventLoopGroup: EventLoopGroup,
+        client: AWSClient,
+        region: Region,
+        bucket: S3.Bucket,
+        endpoint: String? = nil,
+        timeout: TimeAmount? = nil
+    ) {
+        self.eventLoopGroup = eventLoopGroup
+        self.client = client
+        self.region = region
+        self.bucket = bucket
+        self.endpoint = endpoint
+        self.timeout = timeout
+    }
 
-    func createDriver() throws -> ServiceDriver {
+    public func createDriver() throws -> ServiceDriver {
         S3StorageServiceDriver()
     }
 }
