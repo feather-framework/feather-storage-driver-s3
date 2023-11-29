@@ -8,6 +8,7 @@ let package = Package(
         .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
+        .visionOS(.v1),
     ],
     products: [
         .library(name: "FeatherStorageDriverS3", targets: ["FeatherStorageDriverS3"]),
@@ -15,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/soto-project/soto", from: "6.8.0"),
         .package(url: "https://github.com/feather-framework/feather-storage",
-            .upToNextMinor(from: "0.2.0")
+            .upToNextMinor(from: "0.3.0")
         ),
     ],
     targets: [

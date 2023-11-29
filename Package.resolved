@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/feather-framework/feather-service.git",
       "state" : {
-        "revision" : "7e8c2c18fa353fadb1e546fb11cb0e8a7c0ddc04",
-        "version" : "0.2.0"
+        "revision" : "9834b3fe842b7228c66c08d0d23ec5dd7fc693cd",
+        "version" : "0.3.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/feather-framework/feather-storage",
       "state" : {
-        "revision" : "d44e8b377d9fb63e112f70272553cb8ed193b7b4",
-        "version" : "0.2.1"
+        "revision" : "c4192d58e9342c0a7e33abe0a76e5e87afaf3df2",
+        "version" : "0.3.0"
       }
     },
     {

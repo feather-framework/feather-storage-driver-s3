@@ -51,7 +51,7 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
                 httpClientProvider: .createNewWithEventLoopGroup(eventLoopGroup)
             )
             
-            try await registry.add(
+            try await registry.addStorage(
                 S3StorageServiceContext(
                     eventLoopGroup: eventLoopGroup,
                     client: client,

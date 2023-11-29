@@ -13,7 +13,7 @@ Use at your own risk.
 To add a dependency on the package, declare it in your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/feather-framework/feather-storage-driver-s3", .upToNextMinor(from: "0.2.1")),
+.package(url: "https://github.com/feather-framework/feather-storage-driver-s3", .upToNextMinor(from: "0.3.0")),
 ```
 
 and to your application target, add `FeatherStorageDriverS3` to your dependencies:
@@ -31,7 +31,7 @@ import PackageDescription
 let package = Package(
     name: "my-application",
     dependencies: [
-        .package(url: "https://github.com/feather-framework/feather-storage-driver-s3", .upToNextMinor(from: "0.2.1")),
+        .package(url: "https://github.com/feather-framework/feather-storage-driver-s3", .upToNextMinor(from: "0.3.0")),
     ],
     targets: [
         .target(name: "MyApplication", dependencies: [
