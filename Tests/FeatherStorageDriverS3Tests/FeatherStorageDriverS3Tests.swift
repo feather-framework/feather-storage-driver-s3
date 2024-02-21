@@ -10,7 +10,7 @@ import NIOFoundationCompat
 import Logging
 import Foundation
 import XCTest
-import FeatherService
+import FeatherComponent
 import FeatherStorage
 import FeatherStorageDriverS3
 import XCTFeatherStorage
@@ -41,7 +41,7 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
             numberOfThreads: 1 //System.coreCount
         )
         do {
-            let registry = ServiceRegistry()
+            let registry = ComponentRegistry()
             
             let client = AWSClient(
                 credentialProvider: .static(
@@ -52,7 +52,7 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
             )
             
             try await registry.addStorage(
-                S3StorageServiceContext(
+                S3StorageComponentContext(
                     eventLoopGroup: eventLoopGroup,
                     client: client,
                     region: .init(rawValue: self.region),
