@@ -1,14 +1,14 @@
 //
-//  S3StorageServiceContext.swift
+//  S3StorageComponentContext.swift
 //  FeatherStorageDriverS3
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
 
 import SotoS3
-import FeatherService
+import FeatherComponent
 
-public struct S3StorageServiceContext: ServiceContext {
+public struct S3StorageComponentContext: ComponentContext {
     let eventLoopGroup: EventLoopGroup
     let client: AWSClient
     let region: Region
@@ -32,7 +32,7 @@ public struct S3StorageServiceContext: ServiceContext {
         self.timeout = timeout
     }
 
-    public func make() throws -> ServiceBuilder {
-        S3StorageServiceBuilder()
+    public func make() throws -> ComponentBuilder {
+        S3StorageComponentBuilder()
     }
 }

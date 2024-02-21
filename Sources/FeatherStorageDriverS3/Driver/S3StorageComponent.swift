@@ -1,35 +1,35 @@
 //
-//  S3StorageService.swift
+//  S3StorageComponent.swift
 //  FeatherStorageDriverS3
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
 
 import SotoS3
-import FeatherService
+import FeatherComponent
 import FeatherStorage
 
-/// S3 storage service implementation
+/// S3 storage component implementation
 @dynamicMemberLookup
-struct S3StorageService {
+struct S3StorageComponent {
 
-    public let config: ServiceConfig
+    public let config: ComponentConfig
 
     subscript<T>(
-        dynamicMember keyPath: KeyPath<S3StorageServiceContext, T>
+        dynamicMember keyPath: KeyPath<S3StorageComponentContext, T>
     ) -> T {
-        let context = config.context as! S3StorageServiceContext
+        let context = config.context as! S3StorageComponentContext
         return context[keyPath: keyPath]
     }
 
     init(
-        config: ServiceConfig
+        config: ComponentConfig
     ) {
         self.config = config
     }
 }
 
-private extension S3StorageService {
+private extension S3StorageComponent {
 
     var bucketName: String { self.bucket.name! }
     
@@ -46,7 +46,7 @@ private extension S3StorageService {
     }
 }
 
-extension S3StorageService: StorageService {
+extension S3StorageComponent: StorageComponent {
 
     public var availableSpace: UInt64 {
         .max
@@ -67,7 +67,7 @@ extension S3StorageService: StorageService {
             )
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -77,7 +77,7 @@ extension S3StorageService: StorageService {
     ) async throws -> ByteBuffer {
         let exists = await exists(key: key)
         guard exists else {
-            throw StorageServiceError.invalidKey
+            throw StorageComponentError.invalidKey
         }
         do {
             let byteRange = range.map {
@@ -92,15 +92,15 @@ extension S3StorageService: StorageService {
                 logger: logger
             )
             guard let buffer = response.body?.asByteBuffer() else {
-                throw StorageServiceError.invalidBuffer
+                throw StorageComponentError.invalidBuffer
             }
             return buffer
         }
-        catch let error as StorageServiceError {
+        catch let error as StorageComponentError {
             throw error
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -147,7 +147,7 @@ extension S3StorageService: StorageService {
     public func copy(key source: String, to destination: String) async throws {
         let exists = await exists(key: source)
         guard exists else {
-            throw StorageServiceError.invalidKey
+            throw StorageComponentError.invalidKey
         }
         do {
             _ = try await s3.copyObject(
@@ -160,7 +160,7 @@ extension S3StorageService: StorageService {
             )
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -186,7 +186,7 @@ extension S3StorageService: StorageService {
             }
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -201,7 +201,7 @@ extension S3StorageService: StorageService {
             )
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -218,7 +218,7 @@ extension S3StorageService: StorageService {
             )
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -234,15 +234,15 @@ extension S3StorageService: StorageService {
                 logger: logger
             )
             guard let uploadId = res.uploadId else {
-                throw StorageServiceError.invalidMultipartId
+                throw StorageComponentError.invalidMultipartId
             }
             return uploadId
         }
-        catch let error as StorageServiceError {
+        catch let error as StorageComponentError {
             throw error
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -264,12 +264,12 @@ extension S3StorageService: StorageService {
                 logger: logger
             )
             guard let etag = res.eTag else {
-                throw StorageServiceError.invalidMultipartChunk
+                throw StorageComponentError.invalidMultipartChunk
             }
             return .init(chunkId: etag, number: number)
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -288,7 +288,7 @@ extension S3StorageService: StorageService {
             )
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 
@@ -315,7 +315,7 @@ extension S3StorageService: StorageService {
             )
         }
         catch {
-            throw StorageServiceError.unknown(error)
+            throw StorageComponentError.unknown(error)
         }
     }
 }
