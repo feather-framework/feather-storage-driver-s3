@@ -5,8 +5,8 @@
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
 
-import SotoS3
 import FeatherComponent
+import SotoS3
 
 public struct S3StorageComponentContext: ComponentContext {
     let eventLoopGroup: EventLoopGroup
@@ -15,7 +15,7 @@ public struct S3StorageComponentContext: ComponentContext {
     let bucket: S3.Bucket
     let endpoint: String?
     let timeout: TimeAmount?
-    
+
     public init(
         eventLoopGroup: EventLoopGroup,
         client: AWSClient,
@@ -32,7 +32,7 @@ public struct S3StorageComponentContext: ComponentContext {
         self.timeout = timeout
     }
 
-    public func make() throws -> ComponentBuilder {
-        S3StorageComponentBuilder()
+    public func make() throws -> ComponentFactory {
+        S3StorageComponentFactory()
     }
 }

@@ -5,11 +5,10 @@
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
 
-import SotoS3
 import FeatherComponent
 import FeatherStorage
+import SotoS3
 
-/// S3 storage component implementation
 @dynamicMemberLookup
 struct S3StorageComponent {
 
@@ -21,19 +20,13 @@ struct S3StorageComponent {
         let context = config.context as! S3StorageComponentContext
         return context[keyPath: keyPath]
     }
-
-    init(
-        config: ComponentConfig
-    ) {
-        self.config = config
-    }
 }
 
-private extension S3StorageComponent {
+extension S3StorageComponent {
 
-    var bucketName: String { self.bucket.name! }
-    
-    var s3: S3 {
+    fileprivate var bucketName: String { self.bucket.name! }
+
+    fileprivate var s3: S3 {
         let awsUrl = "https://s3.\(self.region.rawValue).amazonaws.com"
         let endpoint = self.endpoint ?? awsUrl
 

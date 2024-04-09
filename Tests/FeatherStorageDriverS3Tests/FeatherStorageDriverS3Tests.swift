@@ -5,16 +5,16 @@
 //  Created by Tibor Bodecs on 2023. 01. 16..
 //
 
-import NIO
-import NIOFoundationCompat
-import Logging
-import Foundation
-import XCTest
 import FeatherComponent
 import FeatherStorage
 import FeatherStorageDriverS3
-import XCTFeatherStorage
+import Foundation
+import Logging
+import NIO
+import NIOFoundationCompat
 import SotoCore
+import XCTFeatherStorage
+import XCTest
 
 final class FeatherStorageDriverS3Tests: XCTestCase {
 
@@ -38,11 +38,11 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
 
     func testS3DriverUsingTestSuite() async throws {
         let eventLoopGroup = MultiThreadedEventLoopGroup(
-            numberOfThreads: 1 //System.coreCount
+            numberOfThreads: 1  //System.coreCount
         )
         do {
             let registry = ComponentRegistry()
-            
+
             let client = AWSClient(
                 credentialProvider: .static(
                     accessKeyId: id,
@@ -50,7 +50,7 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
                 ),
                 httpClientProvider: .createNewWithEventLoopGroup(eventLoopGroup)
             )
-            
+
             try await registry.addStorage(
                 S3StorageComponentContext(
                     eventLoopGroup: eventLoopGroup,
@@ -61,18 +61,14 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
                 )
             )
 
-            try await registry.run()
             let storage = try await registry.storage()
 
             do {
                 let suite = StorageTestSuite(storage)
                 try await suite.testAll()
-
-                try await registry.shutdown()
                 try await client.shutdown()
             }
             catch {
-                try await registry.shutdown()
                 try await client.shutdown()
                 throw error
             }
