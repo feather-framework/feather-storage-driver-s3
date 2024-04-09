@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/soto-project/soto", from: "6.0.0"),
-        .package(url: "https://github.com/feather-framework/feather-storage", .upToNextMinor(from: "0.4.0")),
+        .package(url: "https://github.com/feather-framework/feather-storage", .upToNextMinor(from: "0.5.0")),
     ],
     targets: [
         .target(

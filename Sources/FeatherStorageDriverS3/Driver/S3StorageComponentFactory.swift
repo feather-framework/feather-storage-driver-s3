@@ -1,15 +1,15 @@
 //
-//  S3StorageComponentBuilder.swift
+//  S3StorageComponentFactory.swift
 //  FeatherStorageDriverS3
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
 
-import SotoS3
-import SotoCore
 import FeatherComponent
+import SotoCore
+import SotoS3
 
-struct S3StorageComponentBuilder: ComponentBuilder {
+struct S3StorageComponentFactory: ComponentFactory {
 
     func build(using config: ComponentConfig) throws -> Component {
         S3StorageComponent(config: config)
