@@ -28,7 +28,7 @@ jobs:
     
     - name: Test
       env:
-        SECRET_S3_ID: ${{ secrets.SuperSecret }}
+        SECRET_S3_ID: ${{ secrets.S3_ID }}
       run: S3_ID="$SECRET_S3_ID" swift test --parallel --enable-code-coverage
   
   linux-tests:
