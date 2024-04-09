@@ -9,7 +9,6 @@ import FeatherComponent
 import FeatherStorage
 import SotoS3
 
-/// S3 storage component implementation
 @dynamicMemberLookup
 struct S3StorageComponent {
 
@@ -20,12 +19,6 @@ struct S3StorageComponent {
     ) -> T {
         let context = config.context as! S3StorageComponentContext
         return context[keyPath: keyPath]
-    }
-
-    init(
-        config: ComponentConfig
-    ) {
-        self.config = config
     }
 }
 
