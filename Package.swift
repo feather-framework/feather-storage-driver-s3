@@ -14,8 +14,9 @@ let package = Package(
         .library(name: "FeatherStorageDriverS3", targets: ["FeatherStorageDriverS3"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/soto-project/soto", from: "6.0.0"),
-        .package(url: "https://github.com/feather-framework/feather-storage", .upToNextMinor(from: "0.5.0")),
+        .package(url: "https://github.com/soto-project/soto", from: "7.0.0"),
+//        .package(url: "https://github.com/feather-framework/feather-storage", .upToNextMinor(from: "0.5.0")),
+        .package(url: "https://github.com/feather-framework/feather-storage", branch: "feature/async-iterator"),
     ],
     targets: [
         .target(

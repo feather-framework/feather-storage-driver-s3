@@ -45,14 +45,17 @@ extension S3StorageComponent: StorageComponent {
         .max
     }
 
-    public func upload(
+    public func uploadStream(
         key: String,
-        buffer: ByteBuffer
+        sequence: StorageAnyAsyncSequence<ByteBuffer>
     ) async throws {
         do {
             _ = try await s3.putObject(
                 .init(
-                    body: .byteBuffer(buffer),
+                    body: .init(
+                        asyncSequence: sequence,
+                        length: sequence.length.map { Int($0) }
+                    ),
                     bucket: bucketName,
                     key: key
                 ),
@@ -64,10 +67,10 @@ extension S3StorageComponent: StorageComponent {
         }
     }
 
-    public func download(
+    public func downloadStream(
         key: String,
         range: ClosedRange<Int>?
-    ) async throws -> ByteBuffer {
+    ) async throws -> StorageAnyAsyncSequence<ByteBuffer> {
         let exists = await exists(key: key)
         guard exists else {
             throw StorageComponentError.invalidKey
@@ -84,10 +87,10 @@ extension S3StorageComponent: StorageComponent {
                 ),
                 logger: logger
             )
-            guard let buffer = response.body?.asByteBuffer() else {
-                throw StorageComponentError.invalidBuffer
-            }
-            return buffer
+            return .init(
+                asyncSequence: response.body,
+                length: response.body.length.map { UInt64($0) }
+            )
         }
         catch let error as StorageComponentError {
             throw error
@@ -239,16 +242,19 @@ extension S3StorageComponent: StorageComponent {
         }
     }
 
-    public func upload(
+    public func uploadStream(
         multipartId: String,
         key: String,
         number: Int,
-        buffer: ByteBuffer
+        sequence: StorageAnyAsyncSequence<ByteBuffer>
     ) async throws -> StorageChunk {
         do {
             let res = try await s3.uploadPart(
                 .init(
-                    body: .byteBuffer(buffer),
+                    body: .init(
+                        asyncSequence: sequence,
+                        length: sequence.length.map { Int($0) }
+                    ),
                     bucket: bucketName,
                     key: key,
                     partNumber: number,

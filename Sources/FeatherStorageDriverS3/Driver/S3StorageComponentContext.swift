@@ -6,6 +6,7 @@
 //
 
 import FeatherComponent
+import NIOCore
 import SotoS3
 
 public struct S3StorageComponentContext: ComponentContext {

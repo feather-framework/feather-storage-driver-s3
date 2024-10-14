@@ -47,8 +47,7 @@ final class FeatherStorageDriverS3Tests: XCTestCase {
                 credentialProvider: .static(
                     accessKeyId: id,
                     secretAccessKey: secret
-                ),
-                httpClientProvider: .createNewWithEventLoopGroup(eventLoopGroup)
+                )
             )
 
             try await registry.addStorage(
