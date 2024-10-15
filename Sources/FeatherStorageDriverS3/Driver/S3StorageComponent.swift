@@ -89,7 +89,7 @@ extension S3StorageComponent: StorageComponent {
             )
             return .init(
                 asyncSequence: response.body,
-                length: response.body.length.map { UInt64($0) }
+                length: response.contentLength.map { UInt64($0) }
             )
         }
         catch let error as StorageComponentError {
