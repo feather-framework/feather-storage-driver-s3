@@ -16,6 +16,7 @@ public struct S3StorageComponentContext: ComponentContext {
     let bucket: S3.Bucket
     let endpoint: String?
     let timeout: TimeAmount?
+    let useTransferAcceleratedEndpoint: Bool
 
     public init(
         eventLoopGroup: EventLoopGroup,
@@ -23,7 +24,8 @@ public struct S3StorageComponentContext: ComponentContext {
         region: Region,
         bucket: S3.Bucket,
         endpoint: String? = nil,
-        timeout: TimeAmount? = nil
+        timeout: TimeAmount? = nil,
+        useTransferAcceleratedEndpoint: Bool = false
     ) {
         self.eventLoopGroup = eventLoopGroup
         self.client = client
@@ -31,6 +33,7 @@ public struct S3StorageComponentContext: ComponentContext {
         self.bucket = bucket
         self.endpoint = endpoint
         self.timeout = timeout
+        self.useTransferAcceleratedEndpoint = useTransferAcceleratedEndpoint
     }
 
     public func make() throws -> ComponentFactory {
