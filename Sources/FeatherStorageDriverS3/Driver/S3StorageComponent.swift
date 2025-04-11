@@ -30,11 +30,18 @@ extension S3StorageComponent {
         let awsUrl = "https://s3.\(self.region.rawValue).amazonaws.com"
         let endpoint = self.endpoint ?? awsUrl
 
+        var options: AWSServiceConfig.Options = []
+
+        if self.useTransferAcceleratedEndpoint {
+            options.insert(.s3UseTransferAcceleratedEndpoint)
+        }
+
         return .init(
             client: self.client,
             region: self.region,
             endpoint: endpoint,
-            timeout: self.timeout
+            timeout: self.timeout,
+            options: options
         )
     }
 }
@@ -71,10 +78,6 @@ extension S3StorageComponent: StorageComponent {
         key: String,
         range: ClosedRange<Int>?
     ) async throws -> StorageAnyAsyncSequence<ByteBuffer> {
-        let exists = await exists(key: key)
-        guard exists else {
-            throw StorageComponentError.invalidKey
-        }
         do {
             let byteRange = range.map {
                 "bytes=\($0.lowerBound)-\($0.upperBound)"
@@ -91,6 +94,13 @@ extension S3StorageComponent: StorageComponent {
                 asyncSequence: response.body,
                 length: response.contentLength.map { UInt64($0) }
             )
+        }
+        catch let error as S3ErrorType {
+            // If the error is "NoSuchKey", handle it as an invalid key
+            if case .noSuchKey = error {
+                throw StorageComponentError.invalidKey
+            }
+            throw StorageComponentError.unknown(error)
         }
         catch let error as StorageComponentError {
             throw error
@@ -121,10 +131,6 @@ extension S3StorageComponent: StorageComponent {
     }
 
     public func size(key: String) async -> UInt64 {
-        let exists = await exists(key: key)
-        guard exists else {
-            return 0
-        }
         do {
             let res = try await s3.headObject(
                 .init(
@@ -141,10 +147,6 @@ extension S3StorageComponent: StorageComponent {
     }
 
     public func copy(key source: String, to destination: String) async throws {
-        let exists = await exists(key: source)
-        guard exists else {
-            throw StorageComponentError.invalidKey
-        }
         do {
             _ = try await s3.copyObject(
                 .init(
@@ -154,6 +156,13 @@ extension S3StorageComponent: StorageComponent {
                 ),
                 logger: logger
             )
+        }
+        catch let error as S3ErrorType {
+            // If the error is "NoSuchKey", handle it as an invalid key
+            if case .noSuchKey = error {
+                throw StorageComponentError.invalidKey
+            }
+            throw StorageComponentError.unknown(error)
         }
         catch {
             throw StorageComponentError.unknown(error)
